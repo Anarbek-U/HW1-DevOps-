@@ -1,0 +1,371 @@
+anarbek@anaka-server1:~$ mkdir -p ~/hw_logs && cd ~/hw_logs && touch error_{1..5}.log app_{1..3}.txt debug.log
+anarbek@anaka-server1:~/hw_logs$ ls -l
+итого 0
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 app_1.txt
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 app_2.txt
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 app_3.txt
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 debug.log
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 error_1.log
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 error_2.log
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 error_3.log
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 error_4.log
+-rw-rw-r-- 1 anarbek anarbek 0 апр  3 15:26 error_5.log
+anarbek@anaka-server1:~/hw_logs$ echo "ERROR" | tee error_{1..5}.log; printf "INFO\nDEBUG\n" | tee app_{1..3}.txt debug.
+log
+ERROR
+INFO
+DEBUG
+anarbek@anaka-server1:~/hw_logs$ ls -l
+итого 36
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_1.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_2.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_3.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 debug.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_1.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_2.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_3.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_4.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_5.log
+anarbek@anaka-server1:~/hw_logs$ cat app_1.txt
+INFO
+DEBUG
+anarbek@anaka-server1:~/hw_logs$ find . -name "*.log"; "*.txt"
+./debug.log
+./error_5.log
+./error_1.log
+./error_2.log
+./error_3.log
+./error_4.log
+*.txt: команда не найдена
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt"\)
+find: неверное выражение; ожидалось где-то найти «)», но её нет.
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt" \)
+./debug.log
+./error_5.log
+./app_2.txt
+./error_1.log
+./error_2.log
+./app_1.txt
+./app_3.txt
+./error_3.log
+./error_4.log
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt"\) | grep -irnH "ERROR" || "WARNING" . > ~/hw_logs/report.txt
+find: неверное выражение; ожидалось где-то найти «)», но её нет.
+error_5.log:1:ERROR
+error_1.log:1:ERROR
+error_2.log:1:ERROR
+error_3.log:1:ERROR
+error_4.log:1:ERROR
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt" \) | grep -irnH "ERROR" || "WARNING" . > ~/hw_
+logs/report.txt
+error_5.log:1:ERROR
+error_1.log:1:ERROR
+error_2.log:1:ERROR
+error_3.log:1:ERROR
+error_4.log:1:ERROR
+anarbek@anaka-server1:~/hw_logs$ cat report
+cat: report: Нет такого файла или каталога
+anarbek@anaka-server1:~/hw_logs$ cat report.txt
+cat: report.txt: Нет такого файла или каталога
+anarbek@anaka-server1:~/hw_logs$ ls -l
+итого 36
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_1.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_2.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_3.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 debug.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_1.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_2.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_3.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_4.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_5.log
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt" \) | grep -irnH "ERROR" || "WARNING" > ~/hw_lo
+gs/report.txt
+error_5.log:1:ERROR
+error_1.log:1:ERROR
+error_2.log:1:ERROR
+error_3.log:1:ERROR
+error_4.log:1:ERROR
+anarbek@anaka-server1:~/hw_logs$ ls -l
+итого 36
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_1.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_2.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 app_3.txt
+-rw-rw-r-- 1 anarbek anarbek 11 апр  3 15:27 debug.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_1.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_2.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_3.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_4.log
+-rw-rw-r-- 1 anarbek anarbek  6 апр  3 15:27 error_5.log
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt" \) | grep -irnH -E "ERROR|WARNING" > ~/hw_logs
+/report.txt
+grep: report.txt: файл ввода также используется и для вывода
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 48
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 15:52 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 15:24 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 15:52 report.txt
+anarbek@anaka-server1:~/hw_logs$ cat report.txt
+error_5.log:1:ERROR
+error_1.log:1:ERROR
+error_2.log:1:ERROR
+error_3.log:1:ERROR
+error_4.log:1:ERROR
+anarbek@anaka-server1:~/hw_logs$ rm report.txt
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt" \) | grep -irnH -E "ERROR|WARNING" > ~/hw_logs/report.txt
+grep: report.txt: файл ввода также используется и для вывода
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 48
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 15:53 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 15:24 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 15:53 report.txt
+anarbek@anaka-server1:~/hw_logs$ rm report.txt
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 44
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 15:54 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 15:24 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+anarbek@anaka-server1:~/hw_logs$ find . \( -name "*.log" -o -name "*.txt" \) | grep -irnH -E "ERROR|WARNING" > ~/hw_logs/report.txt
+grep: report.txt: файл ввода также используется и для вывода
+anarbek@anaka-server1:~/hw_logs$ rm report.txt
+anarbek@anaka-server1:~/hw_logs$ grep -rniH --inclide="*.log" --include="*.txt" -E "ERROR|WARNING" > ~/hw_logs/report.txt
+grep: нераспознанный параметр «--inclide=*.log»
+Использование: grep [ПАРАМЕТР]… ШАБЛОНЫ [ФАЙЛ]…
+Запустите «grep --help» для получения более подробного описания.
+anarbek@anaka-server1:~/hw_logs$ grep --help
+Использование: grep [ПАРАМЕТР]… ШАБЛОНЫ [ФАЙЛ]…
+Поиск ШАБЛОНОВ в каждом ФАЙЛЕ.
+Пример: grep -i 'hello world' menu.h main.c
+ШАБЛОНОВ можно указать несколько, разделяя их символом новой строки.
+
+Шаблон выбора и его интерпретация:
+  -E, --extended-regexp  ШАБЛОНЫ — расширенные регулярные выражения
+  -F, --fixed-regexp     ШАБЛОНЫ — строки
+  -G, --basic-regexp     ШАБЛОНЫ — простые регулярные выражения
+  -P, --perl-regexp      ШАБЛОНЫ — регулярные выражения языка Perl
+  -e, --regexp=ШАБЛОНЫ   использовать ШАБЛОНЫ для поиска
+  -f, --file=ФАЙЛ        брать ШАБЛОНЫ из ФАЙЛа
+  -i, --ignore-case      игнорировать различие регистра
+      --no-ignore-case   учитывать регистр (по умолчанию)
+  -w, --word-regexp      совпадение обязательно с целым словом
+  -x, --line-regexp      совпадение обязательно с целой строкой
+  -z, --null-data        строки разделяются байтом с нулевым значением, а не
+                         символом конца строки
+
+Разное:
+  -s, --no-messages         не показывать сообщения об ошибках
+  -v, --invert-match        выбирать не подходящие строки
+  -V, --version             показать информацию о версии и закончить работу
+      --help                показать эту справку и закончить работу
+
+Управление выводом:
+  -m, --max-count=ЧИСЛО     остановиться после указанного
+                            ЧИСЛА совпавших строк
+  -b, --byte-offset         печатать вместе с выходными строками смещение в
+                            байтах
+  -n, --line-number         печатать номер строки вместе с выходными строками
+      --line-buffered       сбрасывать буфер после каждой строки
+  -H, --with-filename       печатать имя файла для каждой выводимой строки
+  -h, --no-filename         не начинать вывод с имени файла
+      --label=МЕТКА         использовать МЕТКУ в качестве имени файла для
+                            стандартного ввода
+  -o, --only-matching       показывать только совпавшие непустые части строк
+  -q, --quiet, --silent     подавлять весь обычный вывод
+      --binary-files=ТИП    считать, что двоичный файл имеет ТИП:
+                            «binary», «text» или «without-match».
+  -a, --text                тоже, что и --binary-files=text
+  -I                        то же, что и --binary-files=without-match
+  -d, --directories=ДЕЙСТВ  как обрабатывать каталоги
+                            ДЕЙСТВИЕ может быть «read» (читать),
+                            «recurse» (рекурсивно) или «skip» (пропускать).
+  -D, --devices=ДЕЙСТВ      как обрабатывать устройства, FIFO и сокеты
+                            ДЕЙСТВИЕ может быть «read» или «skip»
+  -r, --recursive           то же, что и --directories=recurse
+  -R, --dereference-recursive                             тоже, но с переходом
+                            по всем символьным ссылкам
+      --include=МАСКА       обработать только файлы, подпадающие под
+                            МАСКУ (файловый шаблон)
+      --exclude=МАСКА       пропустить файлы, подпадающие под МАСКУ
+      --exclude-from=ФАЙЛ   пропустить файлы, подпадающие под маску
+                            файлов из ФАЙЛА
+      --exclude-dir=МАСКА   пропустить каталоги, подпадающие под МАСКУ
+  -L, --files-without-match печатать только имена ФАЙЛОВ без выбранных строк
+  -l, --files-with-matches  печатать только имена ФАЙЛОВ с выбранными строками
+  -c, --count               печатать только количество выбранных
+                            строк на ФАЙЛ
+  -T, --initial-tab         выравнивать табуляцией (если нужно)
+  -Z, --null                печатать байт 0 после имени ФАЙЛА
+
+Управление контекстом:
+  -B, --before-context=ЧИС  печатать ЧИСЛО строк предшествующего контекста
+  -A, --after-context=ЧИС   печатать ЧИСЛО строк последующего контекста
+  -C, --context[=ЧИС]       печатать ЧИСЛО строк контекста
+  -ЧИСЛО                    то же, что и --context=ЧИСЛО
+      --group-separator=SEP печатать SEP в строке между совпадениями
+                            с контекстом
+      --no-group-separator  не печатать разделитель между совпадениями
+                            с контекстом
+      --color[=КОГДА],
+      --colour[=КОГДА]      использовать маркеры для различия совпадающих
+                            строк; КОГДА может быть «always» (всегда),
+                            «never» (никогда) или «auto» (автоматически)
+  -U, --binary              не удалять символы CR в конце строки
+                            (MSDOS/Windows)
+
+Если в качестве ФАЙЛА указан символ «-», то читается стандартный ввод.
+Если ФАЙЛ не указан, то читается текущий каталог «.»  и «-» в противном
+случае. Если указано менее двух ФАЙЛОВ, то предполагается -h.
+При нахождении совпадений любой строки кодом завершения будет 0
+и 1, если ничего не совпало. При возникновении ошибок и если не указан
+параметр -q, кодом завершения будет 2.
+
+Об ошибках сообщайте по адресу: bug-grep@gnu.org
+Домашняя страница GNU grep: <https://www.gnu.org/software/grep/>
+Справка по работе с программами GNU: <https://www.gnu.org/gethelp/>
+anarbek@anaka-server1:~/hw_logs$ grep -rniH --include="*.log" --include="*.txt" -E "ERROR|WARNING" > ~/hw_logs/report.tx
+t
+grep: report.txt: файл ввода также используется и для вывода
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 48
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 16:01 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 15:24 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 16:02 report.txt
+anarbek@anaka-server1:~/hw_logs$ rm report.txt
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 44
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 16:03 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 15:24 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+anarbek@anaka-server1:~/hw_logs$ grep -rniH --include="*.log" --include="*.txt" -E "ERROR|WARNING" > ~/hw_logs/report.txt
+grep: report.txt: файл ввода также используется и для вывода
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 48
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 16:03 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 15:24 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 16:03 report.txt
+anarbek@anaka-server1:~/hw_logs$ cat report.txt
+error_5.log:1:ERROR
+error_1.log:1:ERROR
+error_2.log:1:ERROR
+error_3.log:1:ERROR
+error_4.log:1:ERROR
+anarbek@anaka-server1:~/hw_logs$ cron -e
+cron: invalid option -- 'e'
+usage: cron
+anarbek@anaka-server1:~/hw_logs$ crontab -e
+no crontab for anarbek - using an empty one
+
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/vim.tiny
+  3. /bin/ed
+
+Choose 1-3 [1]: 1
+crontab: installing new crontab
+anarbek@anaka-server1:~$ cat clean.txt
+cat: clean.txt: Нет такого файла или каталога
+anarbek@anaka-server1:~$ cat clean.log
+cat: clean.log: Нет такого файла или каталога
+anarbek@anaka-server1:~$ cd ~/hw_logs/
+anarbek@anaka-server1:~/hw_logs$ cat clean.log
+cat: clean.log: Нет такого файла или каталога
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 48
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 16:03 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 16:07 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 16:03 report.txt
+anarbek@anaka-server1:~/hw_logs$ crontab -e
+crontab: installing new crontab
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 52
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 16:35 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 16:07 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   35 апр  3 16:35 clean.log
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 16:03 report.txt
+anarbek@anaka-server1:~/hw_logs$ cat clean.log
+10Пт 03 апр 2026 16:35:01 +06
+anarbek@anaka-server1:~/hw_logs$ ls -al
+итого 52
+drwxrwxr-x  2 anarbek anarbek 4096 апр  3 16:35 .
+drwxr-x--- 18 anarbek anarbek 4096 апр  3 16:07 ..
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_1.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_2.txt
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 app_3.txt
+-rw-rw-r--  1 anarbek anarbek   35 апр  3 16:35 clean.log
+-rw-rw-r--  1 anarbek anarbek   11 апр  3 15:27 debug.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_1.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_2.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_3.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_4.log
+-rw-rw-r--  1 anarbek anarbek    6 апр  3 15:27 error_5.log
+-rw-rw-r--  1 anarbek anarbek  100 апр  3 16:03 report.txt
+anarbek@anaka-server1:~/hw_logs$
