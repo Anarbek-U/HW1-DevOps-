@@ -1,0 +1,262 @@
+1.1 
+dig yandex.ru A +short
+77.88.55.88
+5.255.255.77
+77.88.44.55
+
+1.2 
+dig yandex.ru MX +short
+10 mx.yandex.ru.
+У яндекса в данный момент имеется только один почтовый сервер с приоритетом 10.
+
+1.3
+dig vk.com NS +short
+ns1.vk.com.
+ns2.vk.com.
+ns4.vk.com.
+ns3.vk.com.
+
+1.4
+dig -x 77.88.55.242 +short
+ya.ru
+
+1.5
+dig github.com +trace
+Трассировка показывала в общем 4 шага для разрешения.
+Корневые серверы:
+127.0.0.53
+k.root-servers.net
+d.gtld-servers.net
+dns2.p08.nsone.net
+
+1.6
+ping -c 1 mylab.local
+PING mylab.local (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.035 ms
+
+--- mylab.local ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.035/0.035/0.035/0.000 ms
+Система первым проверяет /etc/hosts а затем DNS
+
+1.7
+dig @8.8.8.8 ya.ru +short                
+77.88.44.242
+5.255.255.242
+77.88.55.242
+dig @1.1.1.1 ya.ru +short 
+5.255.255.242
+77.88.55.242
+77.88.44.242
+dig @77.88.8.8 ya.ru +short
+77.88.55.242
+77.88.44.242
+5.255.255.242
+Порядок серверов отличается, а почему отличается порядок, я думаю что обращенноые серверы ya.ru кэшировались DNS сервером и в связи с этим для каждого DNS сервера присвоились только свободные айпи адреса ya.ru
+
+Блок 2:
+
+2.1
+sudo tcpdump -i any port 53 -c 4
+tcpdump: data link type LINUX_SLL2
+tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
+listening on any, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144 bytes
+21:33:34.144704 lo    In  IP localhost.38887 > _localdnsstub.domain: 59106+ [1au] A? google.com. (51)
+21:33:34.144867 enp0s3 Out IP my-server.51732 > 10.0.2.3.domain: 27581+ [1au] A? google.com. (39)
+21:33:34.149987 enp0s3 In  IP 10.0.2.3.domain > my-server.51732: 27581 1/0/1 A 172.217.16.206 (55)
+21:33:34.150106 lo    In  IP _localdnsstub.domain > localhost.38887: 59106 1/0/1 A 172.217.16.206 (55)
+4 packets captured
+24 packets received by filter
+0 packets dropped by kernel
+Порт 53 считается зарезервированным портом для DNS запроса. Данный порт относится к транспортному протоколу UDP
+
+2.2
+Терминал 1: sudo tcpdump -i any port 8100 -c 6 -A
+Терминал 2: nc localhost 8100
+Да, вижу тексты возвращаемые сервисом. Мы видим тексты потому, что сервис работал не защищенным протоклом HTTP. Защищенным протоколом считается HTTPS.
+
+2.3
+Терминал 1: sudo tcpdump -i any icmp -c 4
+Терминал 2: ping -c 2 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=63 time=164 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=63 time=186 ms
+
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 163.502/174.527/185.553/11.025 ms
+У вышеуказанного пакета TTL = 63, как я понимаю, через TTL мы можем определить через сколько машрутизаторов проходил пакет. В нашем случае линукс отправляет по умолчанию 64 - 63 = 1 
+ 
+2.4
+sudo tcpdump -i any -c 20 -w ~/capture.pcap
+sudo tcpdump -r ~/capture.pcap
+reading from file /home/student2/capture.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+06:35:51.380137 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 3856165289:3856165357, ack 74921025, win 65535, length 68
+06:35:51.380736 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 68, win 65535, length 0
+06:35:51.380935 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 68:104, ack 1, win 65535, length 36
+06:35:51.381431 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 104, win 65535, length 0
+06:35:51.384107 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 104:148, ack 1, win 65535, length 44
+06:35:51.384215 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 148:200, ack 1, win 65535, length 52
+06:35:51.384380 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 200:276, ack 1, win 65535, length 76
+06:35:51.384525 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 276:344, ack 1, win 65535, length 68
+06:35:51.384654 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 148, win 65535, length 0
+06:35:51.384654 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 200, win 65535, length 0
+06:35:51.384654 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 276, win 65535, length 0
+06:35:51.384905 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 344, win 65535, length 0
+06:35:51.385027 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 344:380, ack 1, win 65535, length 36
+06:35:51.385439 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 380, win 65535, length 0
+06:35:51.385713 enp0s3 Out IP my-server > ya.ru: ICMP echo request, id 3112, seq 6, length 64
+06:35:51.394403 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [P.], seq 1:37, ack 380, win 65535, length 36
+06:35:51.394551 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 380:416, ack 37, win 65535, length 36
+06:35:51.395185 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [.], ack 416, win 65535, length 0
+06:35:51.413325 enp0s3 In  IP _gateway.50492 > my-server.ssh: Flags [P.], seq 37:73, ack 416, win 65535, length 36
+06:35:51.413450 enp0s3 Out IP my-server.ssh > _gateway.50492: Flags [P.], seq 416:452, ack 73, win 65535, length 36
+Всего прочитано 20 пакетов, из них по транспортному протоколу TCP по порту 22 (ssh) прошли 19 пакетов, а по протолу ICMP (ping) прошел всего 1 пакет. 
+
+Блок 3:
+
+3.1
+nmap localhost
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+2222/tcp open  EtherNetIP-1
+4444/tcp open  krb524
+6789/tcp open  ibm-db2-admin
+7777/tcp open  cbt
+8100/tcp open  xprint-server
+8200/tcp open  trivnet1
+8300/tcp open  tmi
+8400/tcp open  cvd
+8600/tcp open  asterix
+Все порты подвязанные к определенным сервисам отрыты. 
+
+3.2
+nmap -sV -p 8100,8200,8300 localhost
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-04-19 07:03 +06
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00017s latency).
+
+PORT     STATE SERVICE        VERSION
+8100/tcp open  xprint-server?
+8200/tcp open  trivnet1?
+8300/tcp open  tmi?
+На каждом порту работают предпологаемые сервисы xprint-server?, trivnet1?, tmi?
+Для выяснения использовал утилиту ss -tlupn и вяснилось что на вышеуказанных портах работает севрисы python 3
+
+3.3
+nmap -sn 10.0.2.15/24
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-04-19 07:17 +06
+Nmap scan report for _gateway (10.0.2.2)
+Host is up (0.00073s latency).
+Nmap scan report for 10.0.2.3
+Host is up (0.00069s latency).
+Nmap scan report for 10.0.2.4
+Host is up (0.0011s latency).
+Nmap scan report for my-server (10.0.2.15)
+Host is up (0.00023s latency).
+Nmap done: 256 IP addresses (4 hosts up) scanned in 2.92 seconds
+Найдено 4 хоста. 10.0.2.2; 10.0.2.3; 10.0.2.4; 10.0.2.15
+
+3.4
+sudo nmap -sU -p 50-55 localhost
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-04-19 07:21 +06
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000030s latency).
+
+PORT   STATE  SERVICE
+50/udp closed re-mail-ck
+51/udp closed la-maint
+52/udp closed xns-time
+53/udp closed domain
+54/udp closed xns-ch
+55/udp closed isi-gl
+
+Nmap done: 1 IP address (1 host up) scanned in 0.14 seconds
+
+UDP сканирование почему медленное, потому что транспортный протокол UDP не гарантирует ответ и сканеру приходится ждать и перепроверять.
+
+Блок 4:
+
+4.1
+По умолчанию сначала принимаем политику incoming и outgoing
+sudo ufw default allow outgoing разрешаем все исходящие подключения ( по умолчанию она уже включенная по-моему)
+sudo ufw default deny incoming запрещаем все входящие подключения
+sudo ufw allow 22/tcp разрешаем ssh подключения, перед активацией файрвола
+sudo ufw enable
+
+22/tcp                     ALLOW IN    Anywhere                  
+2222/tcp                   ALLOW IN    Anywhere                  
+3050/udp                   ALLOW IN    Anywhere                  
+5272/tcp                   DENY IN     Anywhere                  
+4444/tcp                   ALLOW IN    Anywhere                  
+7777/tcp                   ALLOW IN    Anywhere                  
+6789/tcp                   ALLOW IN    Anywhere                  
+6789                       ALLOW IN    Anywhere                  
+5772/tcp                   DENY IN     Anywhere                  
+8100/tcp                   ALLOW IN    Anywhere                  
+8200/tcp                   ALLOW IN    Anywhere                  
+8300/tcp                   ALLOW IN    Anywhere                  
+8547/tcp                   ALLOW IN    Anywhere                  
+8600/tcp                   ALLOW IN    Anywhere                  
+22/tcp (v6)                ALLOW IN    Anywhere (v6)             
+2222/tcp (v6)              ALLOW IN    Anywhere (v6)             
+3050/udp (v6)              ALLOW IN    Anywhere (v6)             
+5272/tcp (v6)              DENY IN     Anywhere (v6)             
+4444/tcp (v6)              ALLOW IN    Anywhere (v6)             
+7777/tcp (v6)              ALLOW IN    Anywhere (v6)             
+6789/tcp (v6)              ALLOW IN    Anywhere (v6)             
+6789 (v6)                  ALLOW IN    Anywhere (v6)             
+5772/tcp (v6)              DENY IN     Anywhere (v6)             
+8100/tcp (v6)              ALLOW IN    Anywhere (v6)             
+8200/tcp (v6)              ALLOW IN    Anywhere (v6)             
+8300/tcp (v6)              ALLOW IN    Anywhere (v6)             
+8547/tcp (v6)              ALLOW IN    Anywhere (v6)             
+8600/tcp (v6)              ALLOW IN    Anywhere (v6)         
+Порты имеющие статус allow in открыты для принятия подключения
+
+4.2
+sudo iptables -L INPUT -n --line-numbers
+[sudo] password for user: 
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination         
+1    ufw-before-logging-input  0    --  0.0.0.0/0            0.0.0.0/0           
+2    ufw-before-input  0    --  0.0.0.0/0            0.0.0.0/0           
+3    ufw-after-input  0    --  0.0.0.0/0            0.0.0.0/0           
+4    ufw-after-logging-input  0    --  0.0.0.0/0            0.0.0.0/0           
+5    ufw-reject-input  0    --  0.0.0.0/0            0.0.0.0/0           
+6    ufw-track-input  0    --  0.0.0.0/0            0.0.0.0/0       
+
+Правило для порта 22 по-моему находится в правиле ufw-before-input под номером 2. По названию догадываюсь что данное правило контролирует входящих соединений. 
+
+4.3
+sudo ufw allow from 192.168.0.103 to any port 9999 proto tcp
+Rule added
+sudo ufw status | grep 9999           
+9999/tcp                   ALLOW       192.168.0.103             
+sudo ufw delete allow from 192.168.0.103 to any port 9999 proto tcp
+Rule deleted
+
+4.4
+sudo ufw logging on
+sudo tail -5 /var/log/ufw.log
+2026-04-19T13:50:42.813733+06:00 my-server kernel: [UFW BLOCK] IN=enp0s3 OUT= MAC=08:00:27:4e:71:5c:94:bb:43:32:b0:39:08:00 SRC=192.168.0.103 DST=192.168.0.101 LEN=60 TOS=0x00 PREC=0x00 TTL=64 ID=1962 DF PROTO=TCP SPT=50578 DPT=9999 WINDOW=64240 RES=0x00 SYN URGP=0  
+Дата логгирования - 2026-04-19T13:50:42.813733+06:00;
+Имя данного хоста - my-server;
+Политика блокировки - UFW BLOCK;
+Интерфейс - enp0s3;
+IP адрес источника - 192.168.0.101;
+IP адрес хоста - 192.168.0.103;
+По протоколу -  TCP;
+Исходящих пакетов не было;
+TTL=64 
+Какой то мак адрес устройства видимо
+И т д
+
+4.5
+Разница между DROP и REJECT
+При создании правила в конце принимаем определенное действие, из которых DROP отбрасывает молча а REJECT отбрасывает и возвращает сообщение. 
+
+
+
