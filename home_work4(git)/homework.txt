@@ -1,0 +1,27 @@
+1. У меня уже был аккаунт на гите.
+
+2. git clone git@github.com:Anarbek-U/my-first-git-project.git
+echo "<h1>Hello</h1>" > README.md
+git add README.md
+git commit -m 'hello word'
+echo -e "Second commit" >> README.md
+git add .
+git commit -m "Second commit"
+echo -e "Third commit" >> README.md
+git add .
+git commit -m "Thrid commit"
+echo -e "Fourth commit" >> README.md
+git add .
+git commit -m "Fourth commit"
+echo -e "Fifth commit" >> README.md
+git add .
+git commit -m "Fifth commit"
+git push origin main
+
+3. git checkout -b feature/about
+touch about.md
+git add about.md
+git commit -m "about"
+git push -u origin feature/about
+если мержнуть с мейном то перейдем обратно в мейн git checkout main и git merge feature/about и можем пушить мейно обратно git push origin main
+Перейти на страницу своего репо на гитхаб и нажать на кнопку Compare&pull request
